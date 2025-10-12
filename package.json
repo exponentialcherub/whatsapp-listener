@@ -1,0 +1,15 @@
+{
+  "name": "whatsapp-listener",
+  "version": "1.0.0",
+  "description": "App to listen to whatsapp messages and push to an events queue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lgibbs",
+  "license": "ISC",
+  "dependencies": {
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.34.1"
+  }
+}
