@@ -9,6 +9,7 @@
   "author": "lgibbs",
   "license": "ISC",
   "dependencies": {
+    "node": "^18.4.0",
     "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.34.1"
   }
