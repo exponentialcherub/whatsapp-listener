@@ -2,7 +2,8 @@ const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const fplQueueUrl = 'http://localhost:5001/publish/fpl'
-const whatsAppQueue = 'whatsapp.response'
+const whatsAppQueue = 'whatsapp'
+const whatsAppQueueUrl = 'http://localhost:5001/consume/' + whatsAppQueue
 
 async function postMessage(action) {
   try {
@@ -19,7 +20,25 @@ async function postMessage(action) {
   }
 }
 
-async function getMessage() {}
+async function getMessage() {
+  try {
+    const response = await fetch(whatsAppQueueUrl)
+    
+    if(!response.ok) {
+      throw new Error(response.status)
+    }
+    
+    const result = await response.json()
+    console.log(result)
+    return result
+  } catch (error) {
+    console.error(error.message)
+  }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 const client = new Client(
   {  
@@ -43,15 +62,30 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
+// message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
 client.on('message_create', async msg => {
+    if(!msg.body.startsWith('!')) {
+        return
+    }
     if (msg.body == '!ping') {
-        msg.reply('pong');
+        msg.reply('pong')
+        return
     }
     
-    if (msg.body.startsWith('!')) {
-      await postMessage(msg.body)
+    await postMessage(msg.body)
+      
+    while(true) {
+      await sleep(100)
+      
+      reply = await getMessage()
+      
+      if(reply['status'] == 'empty') {
+        continue
+      }
+      
+      msg.reply(reply['message'])
+      break
     }
-    
 });
 
 client.initialize();
