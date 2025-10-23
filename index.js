@@ -74,7 +74,8 @@ client.on('message_create', async msg => {
     
     await postMessage(msg.body)
       
-    while(true) {
+    var tries = 0
+    while(++tries < 20) {
       await sleep(100)
       
       reply = await getMessage()
@@ -84,7 +85,7 @@ client.on('message_create', async msg => {
       }
       
       msg.reply(reply['message'])
-      break
+      return
     }
 });
 
