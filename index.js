@@ -5,6 +5,27 @@ const fplQueueUrl = 'http://localhost:5001/publish/fpl'
 const whatsAppQueue = 'whatsapp'
 const whatsAppQueueUrl = 'http://localhost:5001/consume/' + whatsAppQueue
 
+const messageTo = {
+  'test': '447446909348-1635533919@g.us', // MEEEEEEEE
+  'prod': '447951286325-1619878176@g.us' // FC Bathelona
+}
+
+function getEnv() {
+  if(!process.argv[2]) {
+    throw new Error('Please provide valid environment. Example usage: node index.js test')
+  }
+  return process.argv[2]
+}
+
+function getMessageTo() {
+  const env = getEnv()
+  const messageToId = messageTo[env]
+  if(!messageToId) {
+    throw new Error('Could not identify chat to listen to in env: ' + env)
+  }
+  return messageToId
+}
+
 async function postMessage(action) {
   try {
     const response = await fetch(fplQueueUrl, {method: "POST", body: JSON.stringify({action: action, reply_to: whatsAppQueue})})
@@ -64,7 +85,9 @@ client.on('ready', () => {
 
 // message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
 client.on('message_create', async msg => {
-    if(!msg.body.startsWith('!')) {
+    const messageToId = getMessageTo()
+    
+    if(msg.to != messageToId || !msg.body.startsWith('!')) {
         return
     }
     if (msg.body == '!ping') {
