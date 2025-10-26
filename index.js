@@ -1,4 +1,4 @@
-const { Client } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const fplQueueUrl = 'http://localhost:5001/publish/fpl'
@@ -69,7 +69,8 @@ const client = new Client(
           '--disable-setuid-sandbox'
         ],
         executablePath: '/bin/chromium'
-      }
+      },
+      authStrategy: new LocalAuth({clientId: "whatsapp-client-" + getEnv() })
   }
 );
 
