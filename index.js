@@ -73,7 +73,7 @@ const client = new Client(
           '--no-sandbox',
           '--disable-setuid-sandbox'
         ],
-        //executablePath: '/bin/chromium'
+        executablePath: '/bin/chromium'
       },
       authStrategy: new LocalAuth({clientId: "whatsapp-client-" + getEnv() })
   }
