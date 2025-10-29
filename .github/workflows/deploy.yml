@@ -5,20 +5,9 @@ on:
       - main
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@v5
-      - name: Setup Tailscale
-        id: tailscale
-        uses: tailscale/github-action@v4
-        with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
-          tags: tag:whatsapp-listener-ci
-          version: latest
-          ping: ${{ secrets.HOST_IP }}
-      - name: Deploy
-        id: deploy
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_USER }}@raspberrypi "bash -s --" < "scripts/deploy.sh" whatsapp-listener \"node index.js prod\"
+    uses: exponentialcherub/deploy-pi/.github/workflows/deploy-pi.yml@v1.0.5
+    with:
+      app-name: "whatsapp-listener"
+      startup-cmd: "'npm install; node index.js prod;'"
+      branch: "main"
+    secrets: inherit
