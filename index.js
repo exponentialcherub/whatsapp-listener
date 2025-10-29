@@ -5,7 +5,7 @@ const fplQueueUrl = 'http://localhost:5001/publish/fpl'
 const whatsAppQueue = 'whatsapp'
 const whatsAppQueueUrl = 'http://localhost:5001/consume/' + whatsAppQueue
 
-const messageTo = {
+const messageFrom = {
   'test': '447446909348-1635533919@g.us', // MEEEEEEEE
   'prod': '447951286325-1619878176@g.us' // FC Bathelona
 }
@@ -17,13 +17,13 @@ function getEnv() {
   return process.argv[2]
 }
 
-function getMessageTo() {
+function getMessageFrom() {
   const env = getEnv()
-  const messageToId = messageTo[env]
-  if(!messageToId) {
+  const messageFromId = messageFrom[env]
+  if(!messageFromId) {
     throw new Error('Could not identify chat to listen to in env: ' + env)
   }
-  return messageToId
+  return messageFromId
 }
 
 async function postMessage(action) {
@@ -61,6 +61,11 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+function isValidMsg(msg) {
+  const messageFromId = getMessageFrom()
+  return (msg.from == messageFromId || msg.to == messageFromId) && msg.body.startsWith('!')
+}
+
 const client = new Client(
   {  
       puppeteer: {
@@ -86,9 +91,7 @@ client.on('ready', () => {
 
 // message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
 client.on('message_create', async msg => {
-    const messageToId = getMessageTo()
-    
-    if(msg.to != messageToId || !msg.body.startsWith('!')) {
+    if(!isValidMsg(msg)) {
         return
     }
     if (msg.body == '!ping') {
