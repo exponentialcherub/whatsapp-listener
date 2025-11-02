@@ -79,7 +79,6 @@ async function pollForNotifications() {
     }
     
     client.sendMessage(getMessageFrom(), reply['message'])
-    return
   }
 }
 
