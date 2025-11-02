@@ -1,9 +1,11 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const fplQueueUrl = 'http://localhost:5001/publish/fpl'
+const queueDomain = 'http://localhost:5001'
+const fplQueueUrl = queueDomain + '/publish/fpl'
 const whatsAppQueue = 'whatsapp'
-const whatsAppQueueUrl = 'http://localhost:5001/consume/' + whatsAppQueue
+const whatsAppQueueUrl = queueDomain + '/consume/' + whatsAppQueue
+const notifyQueueUrl = queueDomain + '/consume/notify'
 
 const messageFrom = {
   'test': '447446909348-1635533919@g.us', // MEEEEEEEE
@@ -41,9 +43,9 @@ async function postMessage(action) {
   }
 }
 
-async function getMessage() {
+async function getMessage(queueUrl) {
   try {
-    const response = await fetch(whatsAppQueueUrl)
+    const response = await fetch(queueUrl)
     
     if(!response.ok) {
       throw new Error(response.status)
@@ -64,6 +66,20 @@ function sleep(ms) {
 function isValidMsg(msg) {
   const messageFromId = getMessageFrom()
   return (msg.from == messageFromId || msg.to == messageFromId) && msg.body.startsWith('!')
+}
+
+async function pollForNotifications() {
+  while(true) {
+    await sleep(30000)
+    
+    reply = await getMessage(notifyQueueUrl)
+    
+    if(reply['status'] == 'empty') {
+      continue
+    }
+    
+    client.sendMessage(getMessageFrom(), reply['message'])
+  }
 }
 
 const client = new Client(
@@ -87,6 +103,8 @@ client.on('qr', (qr) => {
 
 client.on('ready', () => {
     console.log('Client is ready!');
+
+    pollForNotifications();
 });
 
 // message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
@@ -105,7 +123,7 @@ client.on('message_create', async msg => {
     while(++tries < 20) {
       await sleep(100)
       
-      reply = await getMessage()
+      reply = await getMessage(whatsAppQueueUrl)
       
       if(reply['status'] == 'empty') {
         continue
