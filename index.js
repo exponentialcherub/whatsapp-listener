@@ -103,6 +103,8 @@ client.on('qr', (qr) => {
 
 client.on('ready', () => {
     console.log('Client is ready!');
+
+    pollForNotifications();
 });
 
 // message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
@@ -133,5 +135,3 @@ client.on('message_create', async msg => {
 });
 
 client.initialize();
-
-pollForNotifications();
