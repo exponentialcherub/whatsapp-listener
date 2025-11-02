@@ -5,9 +5,9 @@ on:
       - main
 jobs:
   deploy:
-    uses: exponentialcherub/deploy-pi/.github/workflows/deploy-pi.yml@v1.0.2
+    uses: exponentialcherub/deploy-pi/.github/workflows/deploy-pi.yml@v1.0.5
     with:
       app-name: "whatsapp-listener"
-      startup-cmd: "node index.js prod"
+      startup-cmd: "'npm install; node index.js prod;'"
       branch: "main"
     secrets: inherit
