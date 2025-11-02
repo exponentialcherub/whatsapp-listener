@@ -3,7 +3,8 @@ const qrcode = require('qrcode-terminal');
 
 const queueDomain = 'http://localhost:5001'
 const fplQueueUrl = queueDomain + '/publish/fpl'
-const whatsAppQueueUrl = queueDomain + '/consume/whatsapp'
+const whatsAppQueue = 'whatsapp'
+const whatsAppQueueUrl = queueDomain + '/consume/' + whatsAppQueue
 const notifyQueueUrl = queueDomain + '/consume/notify'
 
 const messageFrom = {
