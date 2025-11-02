@@ -67,6 +67,21 @@ function isValidMsg(msg) {
   return (msg.from == messageFromId || msg.to == messageFromId) && msg.body.startsWith('!')
 }
 
+async function pollForNotifications() {
+  while(true) {
+    await sleep(100)
+    
+    reply = await getMessage(notifyQueueUrl)
+    
+    if(reply['status'] == 'empty') {
+      continue
+    }
+    
+    client.sendMessage(getMessageFrom(), reply['message'])
+    return
+  }
+}
+
 const client = new Client(
   {  
       puppeteer: {
@@ -119,16 +134,4 @@ client.on('message_create', async msg => {
 
 client.initialize();
 
-// Poll for notify messages
-while(true) {
-  await sleep(100)
-  
-  reply = await getMessage(notifyQueueUrl)
-  
-  if(reply['status'] == 'empty') {
-    continue
-  }
-  
-  client.sendMessage(getMessageFrom(), reply['message'])
-  return
-}
+pollForNotifications();
