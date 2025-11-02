@@ -69,7 +69,7 @@ function isValidMsg(msg) {
 
 async function pollForNotifications() {
   while(true) {
-    await sleep(100)
+    await sleep(30000)
     
     reply = await getMessage(notifyQueueUrl)
     
