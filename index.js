@@ -1,9 +1,10 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const fplQueueUrl = 'http://localhost:5001/publish/fpl'
-const whatsAppQueue = 'whatsapp'
-const whatsAppQueueUrl = 'http://localhost:5001/consume/' + whatsAppQueue
+const queueDomain = 'http://localhost:5001'
+const fplQueueUrl = queueDomain + '/publish/fpl'
+const whatsAppQueueUrl = queueDomain + '/consume/whatsapp'
+const notifyQueueUrl = queueDomain + '/consume/notify'
 
 const messageFrom = {
   'test': '447446909348-1635533919@g.us', // MEEEEEEEE
@@ -41,9 +42,9 @@ async function postMessage(action) {
   }
 }
 
-async function getMessage() {
+async function getMessage(queueUrl) {
   try {
-    const response = await fetch(whatsAppQueueUrl)
+    const response = await fetch(queueUrl)
     
     if(!response.ok) {
       throw new Error(response.status)
@@ -105,7 +106,7 @@ client.on('message_create', async msg => {
     while(++tries < 20) {
       await sleep(100)
       
-      reply = await getMessage()
+      reply = await getMessage(whatsAppQueueUrl)
       
       if(reply['status'] == 'empty') {
         continue
@@ -117,3 +118,17 @@ client.on('message_create', async msg => {
 });
 
 client.initialize();
+
+// Poll for notify messages
+while(true) {
+  await sleep(100)
+  
+  reply = await getMessage(notifyQueueUrl)
+  
+  if(reply['status'] == 'empty') {
+    continue
+  }
+  
+  client.sendMessage(getMessageFrom(), reply['message'])
+  return
+}
