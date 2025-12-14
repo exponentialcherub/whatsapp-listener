@@ -111,7 +111,6 @@ client.on('ready', () => {
 
 // message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
 client.on('message_create', async msg => {
-  console.log(msg)
     if(!isValidMsg(msg)) {
         return
     }
