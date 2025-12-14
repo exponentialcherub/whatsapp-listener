@@ -1,8 +1,9 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const { loadConfig } = require('./config/config.js')
 
 const queueDomain = 'http://localhost:5001'
-const fplQueueUrl = queueDomain + '/publish/fpl'
+const publishUrl = queueDomain + '/publish'
 const whatsAppQueue = 'whatsapp'
 const whatsAppQueueUrl = queueDomain + '/consume/' + whatsAppQueue
 const notifyQueueUrl = queueDomain + '/consume/notify'
@@ -11,6 +12,8 @@ const messageFrom = {
   'test': '447446909348-1635533919@g.us', // MEEEEEEEE
   'prod': '447951286325-1619878176@g.us' // FC Bathelona
 }
+
+const config = loadConfig()
 
 function getEnv() {
   if(!process.argv[2]) {
@@ -28,9 +31,9 @@ function getMessageFrom() {
   return messageFromId
 }
 
-async function postMessage(action) {
+async function postMessage(action, target) {
   try {
-    const response = await fetch(fplQueueUrl, {method: "POST", body: JSON.stringify({action: action, reply_to: whatsAppQueue})})
+    const response = await fetch(`${publishUrl}/${target}`, {method: "POST", body: JSON.stringify({action: action, reply_to: whatsAppQueue})})
     
     if(!response.ok) {
       throw new Error(response.status)
@@ -64,8 +67,7 @@ function sleep(ms) {
 }
 
 function isValidMsg(msg) {
-  const messageFromId = getMessageFrom()
-  return (msg.from == messageFromId || msg.to == messageFromId) && msg.body.startsWith('!')
+  return typeof msg.body === 'string' && msg.body.startsWith('!')
 }
 
 async function pollForNotifications() {
@@ -109,28 +111,40 @@ client.on('ready', () => {
 
 // message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
 client.on('message_create', async msg => {
+  console.log(msg)
     if(!isValidMsg(msg)) {
         return
     }
+
     if (msg.body == '!ping') {
         msg.reply('pong')
         return
     }
+
+    const channel = config.channels.find(channel => {
+      const source = channel.source
+      return msg.from == source || msg.to == source
+    });
+
+    if (!channel) {
+      return
+    }
     
-    await postMessage(msg.body)
+    await postMessage(msg.body, channel.target)
       
-    var tries = 0
-    while(++tries < 20) {
+    var replies = 0
+    var attempts = 0
+    while(++attempts < 20) {
       await sleep(100)
       
       reply = await getMessage(whatsAppQueueUrl)
       
-      if(reply['status'] == 'empty') {
-        continue
-      }
+      if(reply['status'] == 'empty') continue;
       
       msg.reply(reply['message'])
-      return
+      attempts = 0
+      replies++
+      if(replies >= channel.maxReplies) break;
     }
 });
 

@@ -1,0 +1,3 @@
+src/.wwebjs_auth/**
+src/.wwebjs_cache/**
+node_modules

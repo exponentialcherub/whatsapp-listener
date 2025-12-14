@@ -1,0 +1,21 @@
+{
+    "channels": [
+        {
+            "source": "447951286325-1619878176@g.us",
+            "target": "fpl",
+            "maxReplies": 1
+        },
+        {
+            "source": "447446909348-1635533919@g.us",
+            "target": "fpl",
+            "maxReplies": 1
+        },
+        {
+            "source": "447749281876@c.us",
+            "target": "indybest",
+            "maxReplies": 20
+        }
+    ],
+    "queue_domain": "",
+    "notification_queue": "notify"
+}
