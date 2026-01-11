@@ -1,11 +1,11 @@
 import { Client, LocalAuth } from 'whatsapp-web.js';
 import * as qrcode from 'qrcode-terminal';
-import { postMessage } from './queue/queue.ts';
+import { postMessage } from './queue/queue';
 import * as WAWebJS from 'whatsapp-web.js';
 import { startNotificationPoller, SendMessageFn } from './polling/notificationPoller';
 import { pollForReplies } from './polling/replyPoller';
-import { config, env } from './config/index.ts';
-import { Channel } from './types/config.ts';
+import { config, env } from './config/index';
+import { Channel } from './types/config';
 
 type Message = WAWebJS.Message;
 
