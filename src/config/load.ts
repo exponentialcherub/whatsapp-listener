@@ -9,7 +9,9 @@ function readJson(filePath: string): unknown {
 }
 
 export function loadConfig(): Config {
-  const env = process.env.NODE_ENV ?? 'dev';
+  const env = process.env.NODE_ENV;
+
+  if(!env) throw new Error("NODE_ENV not provided. Possible values: dev, prod");
 
   const baseConfig = readJson(
     path.join(process.cwd(), 'config/default.json')
