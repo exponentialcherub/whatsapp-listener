@@ -48,7 +48,6 @@ client.on('ready', () => {
 // message_create to listen to my own messages - this causes a recursive trigger. Check for '!' and return early.
 client.on('message_create', async (msg: Message) => {
   try {
-    console.log(msg);
     if (!isValidMsg(msg)) {
       return;
     }
@@ -69,13 +68,11 @@ client.on('message_create', async (msg: Message) => {
     });
 
     if (!channel) {
-      console.log("no channel");
+      console.log("no channel for source " + msg.from);
       return;
     }
 
-    console.log("posted!");
-    console.log(msg.body);
-    console.log(channel.target);
+    console.log("Posted message '" + msg.body + "' to" + channel.target);
     await postMessage(msg.body, channel.target, whatsAppQueue);
 
     // Poll for replies with injected dependencies
