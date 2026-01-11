@@ -1,10 +1,10 @@
-import { Client } from 'whatsapp-web.js';
+import { Client, LocalAuth } from 'whatsapp-web.js';
 import * as qrcode from 'qrcode-terminal';
 import { postMessage } from './queue/queue.ts';
 import * as WAWebJS from 'whatsapp-web.js';
 import { startNotificationPoller, SendMessageFn } from './polling/notificationPoller';
 import { pollForReplies } from './polling/replyPoller';
-import { config } from './config/index.ts';
+import { config, env } from './config/index.ts';
 import { Channel } from './types/config.ts';
 
 type Message = WAWebJS.Message;
@@ -13,16 +13,14 @@ const whatsAppQueue: string = 'whatsapp';
 
 const client = new Client(
   {  
-      puppeteer: {
-        headless: false,
-        userDataDir: './chrome-data',
-        args: [
-          '--disable-blink-features=AutomationControlled',
-          '--disable-infobars',
-          '--disable-features=IsolateOrigins,site-per-process'
-        ],
-        ignoreDefaultArgs: ['--enable-automation']
-      },
+    puppeteer: {
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
+      ],
+      executablePath: '/bin/chromium'
+    },
+    authStrategy: new LocalAuth({clientId: "whatsapp-client-" + env })
   }
 );
 

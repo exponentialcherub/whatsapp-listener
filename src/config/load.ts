@@ -8,10 +8,16 @@ function readJson(filePath: string): unknown {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
-export function loadConfig(): Config {
-  const env = process.env.NODE_ENV;
+export function getEnv(): string {
+    const env = process.env.NODE_ENV;
 
   if(!env) throw new Error("NODE_ENV not provided. Possible values: dev, prod");
+
+  return env;
+}
+
+export function loadConfig(): Config {
+  const env = getEnv();
 
   const baseConfig = readJson(
     path.join(process.cwd(), 'config/default.json')
