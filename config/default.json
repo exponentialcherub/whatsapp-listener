@@ -1,0 +1,8 @@
+{
+    "queue_domain": "http://localhost:5001",
+    "poller": {
+        "notification_interval": 30000,
+        "reply_interval": 100,
+        "max_reply_attempts": 20
+    }
+}

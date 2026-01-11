@@ -1,0 +1,23 @@
+{
+    "channels": {
+        "receive": [
+            {
+                "source": "120363424888443381@g.us",
+                "target": "fpl",
+                "maxReplies": 1,
+                "description": "FC Bathelona Test"
+            },
+            {
+                "source": "447749281876@c.us",
+                "target": "indybest",
+                "maxReplies": 20
+            }
+        ],
+        "notify": [
+            {
+                "source": "notify_fpl",
+                "target": "120363424888443381@g.us"
+            }
+        ]
+    }
+}

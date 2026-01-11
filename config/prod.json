@@ -1,0 +1,24 @@
+{
+    "channels": {
+        "receive": [
+            {
+                "source": "447951286325-1619878176@g.us",
+                "target": "fpl",
+                "maxReplies": 1,
+                "description": "FC Bathelona"
+            },
+            {
+                "source": "447446909348-1635533919@g.us",
+                "target": "fpl",
+                "maxReplies": 1,
+                "description": "MEEEEEEEEE"
+            }
+        ],
+        "notify": [
+            {
+                "source": "notify_fpl",
+                "target": "447951286325-1619878176@g.us"
+            }
+        ]
+    }
+}

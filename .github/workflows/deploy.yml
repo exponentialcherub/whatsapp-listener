@@ -8,6 +8,6 @@ jobs:
     uses: exponentialcherub/deploy-pi/.github/workflows/deploy-pi.yml@v1.0.5
     with:
       app-name: "whatsapp-listener"
-      startup-cmd: "'npm install; node src/index.js prod;'"
+      startup-cmd: "'npm install; npm run build; npm start;'"
       branch: "main"
     secrets: inherit

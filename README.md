@@ -7,8 +7,17 @@ NodeJS >= 18
 
 # How to run
 
+## Development Mode
+```bash
 npm install
+npm run dev
+```
 
-node index.js
+## Production Mode
+```bash
+npm install
+npm run build
+npm start
+```
 
 Scan QR code to authenticate WhatsApp
