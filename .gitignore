@@ -1,3 +1,11 @@
 src/.wwebjs_auth/**
 src/.wwebjs_cache/**
+.wwebjs_auth/**
+.wwebjs_cache/**
 node_modules
+chrome-data/
+*.log
+.env
+.env.local
+dist/
+*.tsbuildinfo
