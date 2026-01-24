@@ -20,7 +20,12 @@ const client = new Client(
       ],
       executablePath: '/bin/chromium'
     },
-    authStrategy: new LocalAuth({clientId: "whatsapp-client-" + env })
+    authStrategy: new LocalAuth({clientId: "whatsapp-client-" + env }),
+    // tmp breaking whatsapp web fix
+    webVersionCache: {
+      type: 'remote',
+      remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/refs/heads/main/html/2.3000.1031490220-alpha.html`,    
+    },
   }
 );
 
